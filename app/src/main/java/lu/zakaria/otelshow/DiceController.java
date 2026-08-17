@@ -22,11 +22,13 @@ public class DiceController {
     private final Counter rolls;
     private final RestClient http;
 
-    public DiceController(MeterRegistry registry, RestClient.Builder builder) {
+    public DiceController(MeterRegistry registry) {
         this.rolls = Counter.builder("dice.rolls")
                 .description("Number of dice rolls")
                 .register(registry);
-        this.http = builder.baseUrl("http://localhost:8080").build();
+        // RestClient.create, not an injected builder: Boot 4 moved the builder
+        // auto-config out of the webmvc starter, and the demo needs no customizers
+        this.http = RestClient.create("http://localhost:8080");
     }
 
     @GetMapping("/roll")

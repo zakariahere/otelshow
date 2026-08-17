@@ -71,46 +71,37 @@ Traffic loop (PowerShell — note `curl.exe`, not the PS alias):
 
 ---
 
-## This branch: `04-otlp-processors` — what processors can DO
+## This branch: `05-otlp-exporters` — ship it (and tour Grafana)
 
-**The diff:** `git diff 03-otlp-receiver..04-otlp-processors -- otel/`
+**The diff:** `git diff 04-otlp-processors..05-otlp-exporters -- otel/`
 
-The full chain, in an order that is itself the lesson:
+Three `otlp_http/*` exporters, one per signal — and the `debug` exporter demoted to
+`normal` because Grafana is the star now:
 
-```
-memory_limiter → resource_detection → resource/env → attributes/team
-              → filter/noise → transform/redact → batch
-   (bouncer)      (self-aware)    (stamp)  (tag)     (drop)   (mutate)   (ship)
-```
-
-- `filter/noise` (OTTL) — drops the `GET /actuator/prometheus` spans our own
-  scraper generates every 5 s. *Drop before you transform: the cheapest span is a
-  dead span.*
-- `transform/redact` (OTTL) — rewrites `url.full` to `player=REDACTED` and the log
-  body to `player ***`. Compliance without touching app code.
-- `resource_detection` / `attributes/team` — every record now carries `os.type`,
-  `host.name`, `team=platform-observability`.
+| Signal | Exporter | Lands in |
+|---|---|---|
+| traces | `otlp_http/tempo` → `lgtm:4318` | Tempo (via LGTM's *embedded* collector — Tempo binds 127.0.0.1 only. A collector behind your collector!) |
+| logs | `otlp_http/loki` → `lgtm:3100/otlp` | Loki, native OTLP ingest |
+| metrics | `otlp_http/prometheus` → `lgtm:9090/api/v1/otlp` | Prometheus, native OTLP ingest |
 
 ```powershell
 docker compose restart otelcol
-docker compose logs -f otelcol
-curl.exe "http://localhost:8080/play?player=alice"
+1..30 | % { curl.exe -s "http://localhost:8080/play?player=alice" > $null; Start-Sleep -m 300 }
 ```
 
-First observation: the actuator-scrape spans that spammed the log are **gone**.
-Then look at a client span: `player=REDACTED`. Log body: `player ***`.
+**Grafana tour** (http://localhost:3000):
 
-**Live exercise:** move `filter/noise` after `transform/redact` in the pipeline,
-restart, and discuss what changed and why order matters. Then put it back.
+1. Explore → **Tempo**: find a `/play` trace — spot the 1.2 s slow ones.
+2. Explore → **Loki**: `{service_name="otelshow-app"}` — click a log line, jump
+   log → trace via its trace_id.
+3. Explore → **Prometheus**: `http_server_request_duration_seconds_count`,
+   `dice_rolls_total`.
+4. Dashboards: the LGTM image ships JVM + RED dashboards — already populated.
 
-**Discussion beat — find the leak:** even now, `player=alice` still hides in metric
-**exemplars** (histogram datapoints keep the original span attributes) and in log
-phrasings the regex doesn't match (`game finished for alice`). Regex redaction is
-whack-a-mole; the durable fix is not recording sensitive values in the first place
-(semantic conventions, SDK-side views). The collector is your safety net, not your
-only defense.
+**One agent, one collector, three backends — and the app knows none of their
+addresses.**
 
-Next: `git switch 05-otlp-exporters`
+Next: `git switch 06-advanced`
 
 ---
 

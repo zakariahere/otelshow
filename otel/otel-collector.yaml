@@ -1,5 +1,5 @@
-# Lesson 4: processors are the collector's superpower. Order matters:
-# memory_limiter first, batch last, filter (drop) before transform (mutate).
+# Lesson 5: exporters - one per signal, fan-out per pipeline.
+# The app knows ONE address (the collector); the collector knows the backends.
 receivers:
   prometheus:
     config:
@@ -58,9 +58,23 @@ processors:
 
 exporters:
   debug:
-    verbosity: detailed
+    verbosity: normal            # demoted: Grafana is the star of this lesson
   prometheus_remote_write:
     endpoint: http://lgtm:9090/api/v1/write
+    tls:
+      insecure: true
+  otlp_http/tempo:               # ('otlphttp' is a deprecated alias - use otlp_http)
+    # Tempo inside lgtm binds OTLP to 127.0.0.1 only, so traces enter through the
+    # LGTM box's own embedded collector on 4318 - a collector behind your collector!
+    endpoint: http://lgtm:4318
+    tls:
+      insecure: true
+  otlp_http/loki:                # Loki has native OTLP ingest
+    endpoint: http://lgtm:3100/otlp
+    tls:
+      insecure: true
+  otlp_http/prometheus:          # Prometheus native OTLP ingest (--web.enable-otlp-receiver)
+    endpoint: http://lgtm:9090/api/v1/otlp
     tls:
       insecure: true
 
@@ -73,12 +87,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, resource_detection, resource/env, attributes/team, filter/noise, transform/redact, batch]
-      exporters: [debug]
+      exporters: [debug, otlp_http/tempo]          # fan-out: same data, two destinations
     metrics/otlp:
       receivers: [otlp]
       processors: [memory_limiter, resource_detection, resource/env, attributes/team, batch]
-      exporters: [debug]
+      exporters: [debug, otlp_http/prometheus]
     logs:
       receivers: [otlp]
       processors: [memory_limiter, resource_detection, resource/env, attributes/team, transform/redact, batch]
-      exporters: [debug]
+      exporters: [debug, otlp_http/loki]

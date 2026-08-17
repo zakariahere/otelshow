@@ -11,3 +11,14 @@ services:
     build: ./app
     ports:
       - "8080:8080"
+
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.158.0
+    volumes:
+      - ./otel/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC (used from branch 03; published now for host-side demos)
+      - "4318:4318"   # OTLP HTTP
+    depends_on:
+      - app
+      - lgtm

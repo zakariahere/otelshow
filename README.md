@@ -71,22 +71,32 @@ Traffic loop (PowerShell — note `curl.exe`, not the PS alias):
 
 ---
 
-## This branch: `main` — the old world
+## This branch: `01-prom-receiver` — receivers (the scrape moved house)
 
-No collector yet. Just the app and the (empty) observability stack.
+**The diff:** `git diff main..01-prom-receiver` — one new container, ~20 lines of YAML.
+
+The collector's `prometheus` receiver embeds Prometheus's actual scrape engine.
+Nothing about the app changed; the thing doing the scraping moved into the collector.
+The pipeline is the smallest legal one: **receiver → exporter**. No processors —
+they're optional, and that's part of the lesson.
 
 ```powershell
-docker compose up -d --build
-curl.exe -s "http://localhost:8080/play?player=alice"          # the app works
-curl.exe -s http://localhost:8080/actuator/prometheus | Select-String dice_rolls
+docker compose up -d
+docker compose logs -f otelcol
 ```
 
-That last line is what Prometheus scrapes from us today. Traces and logs? We shovel
-them into Kafka topics with bespoke code. Now open http://localhost:3000 → Explore →
-Prometheus: Grafana is alive but knows **nothing** about our app. That gap is this
-course.
+Watch the `debug` exporter dump every 5 s: `ResourceMetrics` → scope
+`otelcol/prometheusreceiver` → each `jvm_*` and `dice_rolls_total` datapoint with
+attributes and timestamps. **Scraped text became structured OTLP data the moment it
+entered the collector** — that's the quiet superpower.
 
-Next: `git switch 01-prom-receiver`
+```powershell
+curl.exe -s http://localhost:8080/roll     # roll a few times...
+```
+
+…and watch `dice_rolls_total` tick up in the collector log.
+
+Next: `git switch 02-prom-full-pipeline`
 
 ---
 

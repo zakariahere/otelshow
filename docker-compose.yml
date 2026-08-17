@@ -11,6 +11,15 @@ services:
     build: ./app
     ports:
       - "8080:8080"
+    environment:
+      # THE SHIFT. The agent jar was always in the image - these lines wake it up.
+      JAVA_TOOL_OPTIONS: "-javaagent:/otel/opentelemetry-javaagent.jar"
+      OTEL_SERVICE_NAME: otelshow-app
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otelcol:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment.name=demo,team=platform
+      OTEL_METRIC_EXPORT_INTERVAL: "10000"            # 10s -> snappy live demo
+      OTEL_INSTRUMENTATION_MICROMETER_ENABLED: "true" # bridge dice.rolls counter to OTLP
 
   otelcol:
     image: otel/opentelemetry-collector-contrib:0.158.0

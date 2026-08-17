@@ -1,4 +1,5 @@
-# Lesson 2: the full pipeline contract - receiver -> processors -> exporters.
+# Lesson 3: THE SHIFT - the app pushes, nobody scrapes.
+# The old scrape pipeline keeps running: migration means coexistence.
 receivers:
   prometheus:
     config:
@@ -8,31 +9,46 @@ receivers:
           metrics_path: /actuator/prometheus
           static_configs:
             - targets: ["app:8080"]
+  otlp:                          # one receiver, all three signals
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317   # explicit: the in-container default is localhost-only
+      http:
+        endpoint: 0.0.0.0:4318
 
 processors:
-  memory_limiter:                # ALWAYS first: refuses data before the collector OOMs
+  memory_limiter:
     check_interval: 1s
     limit_mib: 400
     spike_limit_mib: 100
-  resource/env:                  # stamp every batch with where it came from
+  resource/env:
     attributes:
       - key: deployment.environment.name
         value: demo
         action: upsert
-  batch:                         # ALWAYS last: ship in efficient chunks
-    timeout: 2s                  # long enough to SEE batching happen in the logs
+  batch:
+    timeout: 2s
 
 exporters:
   debug:
     verbosity: detailed
-  prometheus_remote_write:       # note the name: 'prometheusremotewrite' is a deprecated alias
+  prometheus_remote_write:
     endpoint: http://lgtm:9090/api/v1/write
     tls:
       insecure: true
 
 service:
   pipelines:
-    metrics:
+    metrics/scrape:              # OLD world, still alive - no debug so it stays quiet
       receivers: [prometheus]
       processors: [memory_limiter, resource/env, batch]
-      exporters: [debug, prometheus_remote_write]   # fan-out: same data, two places
+      exporters: [prometheus_remote_write]
+    traces:                      # NEW world: raw OTLP - stare at it in the logs
+      receivers: [otlp]
+      exporters: [debug]
+    metrics/otlp:
+      receivers: [otlp]
+      exporters: [debug]
+    logs:
+      receivers: [otlp]
+      exporters: [debug]

@@ -71,37 +71,42 @@ Traffic loop (PowerShell — note `curl.exe`, not the PS alias):
 
 ---
 
-## This branch: `05-otlp-exporters` — ship it (and tour Grafana)
+## This branch: `06-advanced` — the collector as a platform
 
-**The diff:** `git diff 04-otlp-processors..05-otlp-exporters -- otel/`
+**The diff:** `git diff 05-otlp-exporters..06-advanced -- otel/`
 
-Three `otlp_http/*` exporters, one per signal — and the `debug` exporter demoted to
-`normal` because Grafana is the star now:
+Two new ideas, one config:
 
-| Signal | Exporter | Lands in |
-|---|---|---|
-| traces | `otlp_http/tempo` → `lgtm:4318` | Tempo (via LGTM's *embedded* collector — Tempo binds 127.0.0.1 only. A collector behind your collector!) |
-| logs | `otlp_http/loki` → `lgtm:3100/otlp` | Loki, native OTLP ingest |
-| metrics | `otlp_http/prometheus` → `lgtm:9090/api/v1/otlp` | Prometheus, native OTLP ingest |
+**Connectors** — an exporter and a receiver glued together: pipelines feeding
+pipelines. `span_metrics` consumes every span and mints RED metrics
+(`traces_span_metrics_calls_total`, `…_duration_*`) with **exemplars** linking each
+datapoint back to a real trace. Traces became metrics — the app changed nothing.
+
+**Tail sampling** — head sampling decides at the start (dumb but cheap); tail
+sampling waits for the whole trace, then decides (smart but stateful). Our policy:
+keep **all errors**, keep **everything slower than 1 s**, keep **25 %** of the rest.
+
+The trace flow is two-stage, and the ordering IS the architecture:
+
+```
+otlp → [enrich/filter/redact] → span_metrics (sees 100 %)   → Prometheus
+                              ↘ forward → tail_sampling (keeps ~25 % + errors + slow) → Tempo
+```
 
 ```powershell
 docker compose restart otelcol
-1..30 | % { curl.exe -s "http://localhost:8080/play?player=alice" > $null; Start-Sleep -m 300 }
+1..50 | % { curl.exe -s "http://localhost:8080/play?player=alice" > $null; Start-Sleep -m 200 }
+1..5  | % { curl.exe -s http://localhost:8080/fail > $null }
 ```
 
-**Grafana tour** (http://localhost:3000):
+- Explore → **Tempo**: ordinary traces thinned to ~25 %, but *every* `/fail` and
+  *every* slow roll survived.
+- Explore → **Prometheus**: `rate(traces_span_metrics_calls_total[1m])` — RED
+  metrics minted from traces, exemplar dots jump straight to Tempo.
 
-1. Explore → **Tempo**: find a `/play` trace — spot the 1.2 s slow ones.
-2. Explore → **Loki**: `{service_name="otelshow-app"}` — click a log line, jump
-   log → trace via its trace_id.
-3. Explore → **Prometheus**: `http_server_request_duration_seconds_count`,
-   `dice_rolls_total`.
-4. Dashboards: the LGTM image ships JVM + RED dashboards — already populated.
+**The collector is not a pipe. It's a platform.**
 
-**One agent, one collector, three backends — and the app knows none of their
-addresses.**
-
-Next: `git switch 06-advanced`
+You made it. Rewind any time: every lesson is a `git switch` away.
 
 ---
 

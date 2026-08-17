@@ -1,5 +1,6 @@
-# Lesson 5: exporters - one per signal, fan-out per pipeline.
-# The app knows ONE address (the collector); the collector knows the backends.
+# Lesson 6: the collector as a platform - connectors + tail sampling.
+# Two-stage trace pipeline: span_metrics must see 100% of spans, THEN
+# tail_sampling keeps 25% + all errors + all slow. Ordering as architecture.
 receivers:
   prometheus:
     config:
@@ -56,6 +57,36 @@ processors:
   batch:
     timeout: 2s
 
+  tail_sampling:                 # decides per WHOLE trace, after it completes
+    decision_wait: 5s            # short for the demo; prod default is 30s
+    num_traces: 50000
+    policies:
+      - name: keep-errors
+        type: status_code
+        status_code:
+          status_codes: [ERROR]
+      - name: keep-slow
+        type: latency
+        latency:
+          threshold_ms: 1000
+      - name: baseline
+        type: probabilistic
+        probabilistic:
+          sampling_percentage: 25
+
+connectors:                      # a connector is an exporter AND a receiver: pipelines feeding pipelines
+  span_metrics:                  # traces in -> RED metrics out ('spanmetrics' is a deprecated alias)
+    histogram:
+      explicit:
+        buckets: [5ms, 10ms, 25ms, 50ms, 100ms, 250ms, 500ms, 1s, 2s, 5s]
+    dimensions:
+      - name: http.request.method
+      - name: http.response.status_code
+    exemplars:
+      enabled: true              # each datapoint links back to a real trace
+    metrics_flush_interval: 15s
+  forward: {}                    # plain glue between the two trace stages below
+
 exporters:
   debug:
     verbosity: normal            # demoted: Grafana is the star of this lesson
@@ -84,10 +115,18 @@ service:
       receivers: [prometheus]
       processors: [memory_limiter, resource/env, batch]
       exporters: [prometheus_remote_write]
-    traces:
+    traces/in:                   # stage 1: enrich + measure EVERY trace
       receivers: [otlp]
-      processors: [memory_limiter, resource_detection, resource/env, attributes/team, filter/noise, transform/redact, batch]
-      exporters: [debug, otlp_http/tempo]          # fan-out: same data, two destinations
+      processors: [memory_limiter, resource_detection, resource/env, attributes/team, filter/noise, transform/redact]
+      exporters: [span_metrics, forward]           # RED metrics computed BEFORE sampling
+    traces/out:                  # stage 2: sample, then ship the survivors
+      receivers: [forward]
+      processors: [tail_sampling, batch]
+      exporters: [debug, otlp_http/tempo]
+    metrics/spanmetrics:         # traces became metrics - no app change needed
+      receivers: [span_metrics]
+      processors: [batch]
+      exporters: [otlp_http/prometheus]
     metrics/otlp:
       receivers: [otlp]
       processors: [memory_limiter, resource_detection, resource/env, attributes/team, batch]

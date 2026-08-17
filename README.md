@@ -71,38 +71,39 @@ Traffic loop (PowerShell — note `curl.exe`, not the PS alias):
 
 ---
 
-## This branch: `03-otlp-receiver` — THE SHIFT
+## This branch: `04-otlp-processors` — what processors can DO
 
-**The diff:** `git diff 02-prom-full-pipeline..03-otlp-receiver` — env vars on the
-app + an `otlp:` receiver. **Zero Java changes.** The agent jar was in the image all
-along; `JAVA_TOOL_OPTIONS` wakes it up.
+**The diff:** `git diff 03-otlp-receiver..04-otlp-processors -- otel/`
 
-The OTel Java agent rewrites bytecode at startup and pushes **traces, metrics AND
-logs** over one protocol (OTLP gRPC, port 4317) to one address — the collector.
-Nobody scrapes. Nothing goes to a topic. The old scrape pipeline still runs
-alongside (quietly): migration means coexistence.
+The full chain, in an order that is itself the lesson:
+
+```
+memory_limiter → resource_detection → resource/env → attributes/team
+              → filter/noise → transform/redact → batch
+   (bouncer)      (self-aware)    (stamp)  (tag)     (drop)   (mutate)   (ship)
+```
+
+- `filter/noise` (OTTL) — drops the `GET /actuator/prometheus` spans our own
+  scraper generates every 5 s. *Drop before you transform: the cheapest span is a
+  dead span.*
+- `transform/redact` (OTTL) — rewrites `url.full` to `player=REDACTED` and the log
+  body to `player ***`. Compliance without touching app code.
+- `resource_detection` / `attributes/team` — every record now carries `os.type`,
+  `host.name`, `team=platform-observability`.
 
 ```powershell
-docker compose up -d --build app
 docker compose restart otelcol
 docker compose logs -f otelcol
 curl.exe "http://localhost:8080/play?player=alice"
 ```
 
-In the collector log you'll read, raw:
+First observation: the actuator-scrape spans that spammed the log are **gone**.
+Then look at a client span: `player=REDACTED`. Log body: `player ***`.
 
-- a full **trace tree**: server `GET /play` → client `GET /roll` → nested server
-  `GET /roll`, sharing one trace_id
-- **log records carrying that SAME trace_id** — correlation for free
-- ~10 s later, JVM metrics + our `dice.rolls` counter, now pushed
-- note `url.full=…player=alice` on the client span and the player name in the log
-  body — *remember those for lesson 4*
+**Live exercise:** move `filter/noise` after `transform/redact` in the pipeline,
+restart, and discuss what changed and why order matters. Then put it back.
 
-```powershell
-curl.exe http://localhost:8080/fail        # ERROR span + stacktrace log record
-```
-
-Next: `git switch 04-otlp-processors`
+Next: `git switch 05-otlp-exporters`
 
 ---
 

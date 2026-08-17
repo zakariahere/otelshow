@@ -1,5 +1,5 @@
-# Lesson 3: THE SHIFT - the app pushes, nobody scrapes.
-# The old scrape pipeline keeps running: migration means coexistence.
+# Lesson 4: processors are the collector's superpower. Order matters:
+# memory_limiter first, batch last, filter (drop) before transform (mutate).
 receivers:
   prometheus:
     config:
@@ -9,10 +9,10 @@ receivers:
           metrics_path: /actuator/prometheus
           static_configs:
             - targets: ["app:8080"]
-  otlp:                          # one receiver, all three signals
+  otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317   # explicit: the in-container default is localhost-only
+        endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
 
@@ -21,11 +21,37 @@ processors:
     check_interval: 1s
     limit_mib: 400
     spike_limit_mib: 100
+
+  resource_detection:            # environment self-awareness: os.type, host.name...
+    detectors: [env, system]     # ('resourcedetection' is a deprecated alias now)
+    override: false
+
   resource/env:
     attributes:
       - key: deployment.environment.name
         value: demo
         action: upsert
+
+  attributes/team:               # simple key/value surgery on every span/metric/log
+    actions:
+      - key: team
+        value: platform-observability
+        action: upsert
+
+  filter/noise:                  # drop before you transform: cheapest span is a dead span
+    error_mode: ignore
+    trace_conditions:
+      # kills the 'GET /actuator/prometheus' spans our own scraper generates every 5s
+      - IsMatch(span.attributes["url.path"], "/actuator.*")
+
+  transform/redact:              # compliance without code changes (OTTL)
+    error_mode: ignore
+    trace_statements:
+      # RestClient client-spans carry url.full including ?player=... - redact it
+      - replace_pattern(span.attributes["url.full"], "player=[^&]*", "player=REDACTED")
+    log_statements:
+      - replace_pattern(log.body, "player \\w+", "player ***")
+
   batch:
     timeout: 2s
 
@@ -39,16 +65,19 @@ exporters:
 
 service:
   pipelines:
-    metrics/scrape:              # OLD world, still alive - no debug so it stays quiet
+    metrics/scrape:
       receivers: [prometheus]
       processors: [memory_limiter, resource/env, batch]
       exporters: [prometheus_remote_write]
-    traces:                      # NEW world: raw OTLP - stare at it in the logs
+    traces:
       receivers: [otlp]
+      processors: [memory_limiter, resource_detection, resource/env, attributes/team, filter/noise, transform/redact, batch]
       exporters: [debug]
     metrics/otlp:
       receivers: [otlp]
+      processors: [memory_limiter, resource_detection, resource/env, attributes/team, batch]
       exporters: [debug]
     logs:
       receivers: [otlp]
+      processors: [memory_limiter, resource_detection, resource/env, attributes/team, transform/redact, batch]
       exporters: [debug]

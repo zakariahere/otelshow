@@ -1,0 +1,13 @@
+services:
+  lgtm:
+    image: grafana/otel-lgtm:0.30.2
+    ports:
+      - "3000:3000"   # Grafana (anonymous admin - just open it)
+      - "9090:9090"   # Prometheus UI
+    # 4317/4318 deliberately NOT published: from branch 01 the standalone
+    # collector owns those host ports - telemetry must go THROUGH it.
+
+  app:
+    build: ./app
+    ports:
+      - "8080:8080"

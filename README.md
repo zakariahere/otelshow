@@ -71,32 +71,31 @@ Traffic loop (PowerShell — note `curl.exe`, not the PS alias):
 
 ---
 
-## This branch: `01-prom-receiver` — receivers (the scrape moved house)
+## This branch: `02-prom-full-pipeline` — the pipeline contract
 
-**The diff:** `git diff main..01-prom-receiver` — one new container, ~20 lines of YAML.
+**The diff:** `git diff 01-prom-receiver..02-prom-full-pipeline -- otel/`
 
-The collector's `prometheus` receiver embeds Prometheus's actual scrape engine.
-Nothing about the app changed; the thing doing the scraping moved into the collector.
-The pipeline is the smallest legal one: **receiver → exporter**. No processors —
-they're optional, and that's part of the lesson.
+Three processors and one real exporter:
+
+- `memory_limiter` — the bouncer. **Always first**: refuses data before OOM.
+- `resource/env` — stamps `deployment.environment.name=demo` on everything.
+- `batch` — the shipping department. **Always last**: efficient chunks.
+- `prometheus_remote_write` — ships to LGTM's Prometheus using an API your
+  Prometheus admins already know.
 
 ```powershell
-docker compose up -d
+docker compose restart otelcol
 docker compose logs -f otelcol
 ```
 
-Watch the `debug` exporter dump every 5 s: `ResourceMetrics` → scope
-`otelcol/prometheusreceiver` → each `jvm_*` and `dice_rolls_total` datapoint with
-attributes and timestamps. **Scraped text became structured OTLP data the moment it
-entered the collector** — that's the quiet superpower.
+Data now arrives in 2-second batches, every resource tagged with the environment.
+Then the proof it left the building:
 
-```powershell
-curl.exe -s http://localhost:8080/roll     # roll a few times...
-```
+- Grafana (http://localhost:3000) → Explore → Prometheus → `rate(dice_rolls_total[1m])`
+- Prometheus (http://localhost:9090) → Status → Targets: **no scrape targets, yet
+  data exists.** Prometheus became a passive database — the collector does the walking.
 
-…and watch `dice_rolls_total` tick up in the collector log.
-
-Next: `git switch 02-prom-full-pipeline`
+Next: `git switch 03-otlp-receiver`
 
 ---
 

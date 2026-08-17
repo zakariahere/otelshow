@@ -1,7 +1,7 @@
-# Lesson 1: a collector is receivers -> (processors) -> exporters. Nothing more.
+# Lesson 2: the full pipeline contract - receiver -> processors -> exporters.
 receivers:
-  prometheus:                    # the world you know, relocated INTO the collector:
-    config:                      # this block is literally Prometheus scrape config
+  prometheus:
+    config:
       scrape_configs:
         - job_name: otelshow-app
           scrape_interval: 5s
@@ -9,12 +9,30 @@ receivers:
           static_configs:
             - targets: ["app:8080"]
 
+processors:
+  memory_limiter:                # ALWAYS first: refuses data before the collector OOMs
+    check_interval: 1s
+    limit_mib: 400
+    spike_limit_mib: 100
+  resource/env:                  # stamp every batch with where it came from
+    attributes:
+      - key: deployment.environment.name
+        value: demo
+        action: upsert
+  batch:                         # ALWAYS last: ship in efficient chunks
+    timeout: 2s                  # long enough to SEE batching happen in the logs
+
 exporters:
   debug:
-    verbosity: detailed          # print every datapoint to stdout - our microscope
+    verbosity: detailed
+  prometheus_remote_write:       # note the name: 'prometheusremotewrite' is a deprecated alias
+    endpoint: http://lgtm:9090/api/v1/write
+    tls:
+      insecure: true
 
 service:
   pipelines:
     metrics:
       receivers: [prometheus]
-      exporters: [debug]         # processors are optional - proof: there are none
+      processors: [memory_limiter, resource/env, batch]
+      exporters: [debug, prometheus_remote_write]   # fan-out: same data, two places

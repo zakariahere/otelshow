@@ -1,0 +1,20 @@
+# Lesson 1: a collector is receivers -> (processors) -> exporters. Nothing more.
+receivers:
+  prometheus:                    # the world you know, relocated INTO the collector:
+    config:                      # this block is literally Prometheus scrape config
+      scrape_configs:
+        - job_name: otelshow-app
+          scrape_interval: 5s
+          metrics_path: /actuator/prometheus
+          static_configs:
+            - targets: ["app:8080"]
+
+exporters:
+  debug:
+    verbosity: detailed          # print every datapoint to stdout - our microscope
+
+service:
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      exporters: [debug]         # processors are optional - proof: there are none

@@ -90,8 +90,11 @@ Next: `git switch 01-prom-receiver`
 
 ---
 
-## Windows notes
+## Windows & demo notes
 
+- **Tempo search lags ~30–60 s** behind ingestion (ingester flush). During a live
+  demo, send traffic FIRST, talk through the config, then search — or tail sampling
+  will look broken when it isn't.
 - Before a session: `netstat -ano | findstr ":4317 :3000 :9090 :8080"` — Aspire/Alloy love to squat OTLP ports.
 - Docker Desktop wants ≥ 6 GB WSL2 RAM (`%UserProfile%\.wslconfig` → `[wsl2] memory=8GB`, then `wsl --shutdown`).
 - After laptop sleep, the WSL clock can drift → spans "in the future", empty Tempo windows. Fix: `wsl --shutdown` + restart Docker Desktop.

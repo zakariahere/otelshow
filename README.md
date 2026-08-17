@@ -103,6 +103,13 @@ Then look at a client span: `player=REDACTED`. Log body: `player ***`.
 **Live exercise:** move `filter/noise` after `transform/redact` in the pipeline,
 restart, and discuss what changed and why order matters. Then put it back.
 
+**Discussion beat — find the leak:** even now, `player=alice` still hides in metric
+**exemplars** (histogram datapoints keep the original span attributes) and in log
+phrasings the regex doesn't match (`game finished for alice`). Regex redaction is
+whack-a-mole; the durable fix is not recording sensitive values in the first place
+(semantic conventions, SDK-side views). The collector is your safety net, not your
+only defense.
+
 Next: `git switch 05-otlp-exporters`
 
 ---

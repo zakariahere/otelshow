@@ -47,8 +47,9 @@ processors:
   transform/redact:              # compliance without code changes (OTTL)
     error_mode: ignore
     trace_statements:
-      # RestClient client-spans carry url.full including ?player=... - redact it
+      # client spans carry url.full, server spans carry url.query - redact both
       - replace_pattern(span.attributes["url.full"], "player=[^&]*", "player=REDACTED")
+      - replace_pattern(span.attributes["url.query"], "player=[^&]*", "player=REDACTED")
     log_statements:
       - replace_pattern(log.body, "player \\w+", "player ***")
 

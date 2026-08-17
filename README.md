@@ -71,31 +71,38 @@ Traffic loop (PowerShell — note `curl.exe`, not the PS alias):
 
 ---
 
-## This branch: `02-prom-full-pipeline` — the pipeline contract
+## This branch: `03-otlp-receiver` — THE SHIFT
 
-**The diff:** `git diff 01-prom-receiver..02-prom-full-pipeline -- otel/`
+**The diff:** `git diff 02-prom-full-pipeline..03-otlp-receiver` — env vars on the
+app + an `otlp:` receiver. **Zero Java changes.** The agent jar was in the image all
+along; `JAVA_TOOL_OPTIONS` wakes it up.
 
-Three processors and one real exporter:
-
-- `memory_limiter` — the bouncer. **Always first**: refuses data before OOM.
-- `resource/env` — stamps `deployment.environment.name=demo` on everything.
-- `batch` — the shipping department. **Always last**: efficient chunks.
-- `prometheus_remote_write` — ships to LGTM's Prometheus using an API your
-  Prometheus admins already know.
+The OTel Java agent rewrites bytecode at startup and pushes **traces, metrics AND
+logs** over one protocol (OTLP gRPC, port 4317) to one address — the collector.
+Nobody scrapes. Nothing goes to a topic. The old scrape pipeline still runs
+alongside (quietly): migration means coexistence.
 
 ```powershell
+docker compose up -d --build app
 docker compose restart otelcol
 docker compose logs -f otelcol
+curl.exe "http://localhost:8080/play?player=alice"
 ```
 
-Data now arrives in 2-second batches, every resource tagged with the environment.
-Then the proof it left the building:
+In the collector log you'll read, raw:
 
-- Grafana (http://localhost:3000) → Explore → Prometheus → `rate(dice_rolls_total[1m])`
-- Prometheus (http://localhost:9090) → Status → Targets: **no scrape targets, yet
-  data exists.** Prometheus became a passive database — the collector does the walking.
+- a full **trace tree**: server `GET /play` → client `GET /roll` → nested server
+  `GET /roll`, sharing one trace_id
+- **log records carrying that SAME trace_id** — correlation for free
+- ~10 s later, JVM metrics + our `dice.rolls` counter, now pushed
+- note `url.full=…player=alice` on the client span and the player name in the log
+  body — *remember those for lesson 4*
 
-Next: `git switch 03-otlp-receiver`
+```powershell
+curl.exe http://localhost:8080/fail        # ERROR span + stacktrace log record
+```
+
+Next: `git switch 04-otlp-processors`
 
 ---
 

@@ -1,0 +1,1 @@
+Last session of the ladder. Everything so far was plumbing: receive, process, export. Today the collector starts making decisions and making DATA — we'll mint metrics from traces and drop traces intelligently. Checkout branch 06-advanced before starting.

@@ -1,0 +1,1 @@
+Do this live if time allows - it's a 2 minute edit. The trap: the output is IDENTICAL after the swap, so people conclude order doesn't matter. Then ask: what did the transform just do to 17,000 actuator spans per day that filter was about to delete? Regex work on dead spans. Cost, not correctness. That's why the chain reads drop-then-mutate.

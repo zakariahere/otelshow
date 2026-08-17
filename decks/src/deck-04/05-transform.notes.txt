@@ -1,0 +1,1 @@
+Honest war story: our first version redacted url.full only. Looked done. Then the debug log showed url.query: Str(player=alice) on SERVER spans - url.full is a CLIENT span attribute. The fix is the highlighted line. Lesson for the team: semantic conventions put the same data under different names depending on span kind. You find this by reading telemetry, not by reviewing config.

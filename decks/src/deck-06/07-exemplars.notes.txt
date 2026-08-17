@@ -1,0 +1,1 @@
+Live demo moment: run the query, hover an exemplar dot, click through to Tempo. This lands hard with anyone who has ever correlated a latency spike to a trace by eyeballing timestamps. Requires exemplars enabled in the connector AND Prometheus running with exemplar-storage — the LGTM image enables that flag out of the box.

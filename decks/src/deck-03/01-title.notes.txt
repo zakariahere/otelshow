@@ -1,0 +1,1 @@
+This is the session where everything changes. Lessons 01 and 02 kept us in the world we know — scraping. Today the app starts PUSHING, and it pushes all three signals: traces, metrics, logs. The headline I want you to remember before we even start: this migration touched zero lines of Java. We'll prove that with the actual diff.

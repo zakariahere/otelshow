@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<body class="dark">
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>measured, not assumed</span></div>
+<h1>Sent 20 traces, <em>kept 7</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols" style="flex:0 0 auto">
+    <div class="stat"><div class="n">3 / 3</div><div class="k">slow traces kept (&gt; 1 s)</div></div>
+    <div class="stat"><div class="n">4 / 4</div><div class="k">/fail error traces kept</div></div>
+  </div>
+  <div class="cols" style="flex:0 0 auto">
+    <div class="stat"><div class="n sig">24 %</div><div class="k">of ordinary traces kept &middot; policy says 25</div></div>
+    <div class="stat"><div class="n">5</div><div class="k">series of traces_span_metrics_calls_total</div></div>
+  </div>
+  <pre class="tight">PS&gt; 1..20 | % { curl.exe -s "http://localhost:8080/play?player=bob" &gt; $null }
+<span class="dim"># decision_wait 5s + Tempo ingester flush &hellip; then:</span>
+sent 20 | kept: 7 (slow: 3, fast: 4)</pre>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>The system does what the YAML says.</strong> Every error survived, every slow trace survived, the boring ones thinned to a quarter.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 06</span><span>06 / 09</span></div>
+</body>

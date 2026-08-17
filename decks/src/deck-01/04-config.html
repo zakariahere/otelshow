@@ -1,0 +1,44 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>04</b><span>OTEL/OTEL-COLLECTOR.YAML</span></div>
+<h1>The receiver is <em>Prometheus, embedded</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left">
+    <pre class="tight" style="font-size:12.5px; line-height:1.5"><span class="c-key">receivers:</span>
+  <span class="c-key">prometheus:</span>
+<span class="mark">    <span class="c-key">config:</span>              <span class="c-com"># literally Prometheus scrape config</span></span><span class="c-key">      scrape_configs:</span>
+        - <span class="c-key">job_name:</span> <span class="c-str">otelshow-app</span>
+          <span class="c-key">scrape_interval:</span> <span class="c-str">5s</span>
+          <span class="c-key">metrics_path:</span> <span class="c-str">/actuator/prometheus</span>
+          <span class="c-key">static_configs:</span>
+            - <span class="c-key">targets:</span> [<span class="c-str">"app:8080"</span>]
+<span class="c-key">exporters:</span>
+  <span class="c-key">debug:</span>
+    <span class="c-key">verbosity:</span> <span class="c-str">detailed</span>
+<span class="c-key">service:</span>
+  <span class="c-key">pipelines:</span>
+    <span class="c-key">metrics:</span>
+      <span class="c-key">receivers:</span> [prometheus]
+      <span class="c-key">exporters:</span> [debug]</pre>
+    <div style="display:flex; flex-direction:column; gap:14px; justify-content:center">
+      <ul class="list plain">
+        <li>The <code>config:</code> block is not &ldquo;Prometheus-like&rdquo;. It IS Prometheus scrape configuration &mdash; the receiver embeds Prometheus&rsquo;s actual scrape engine.</li>
+        <li>Your existing <code>scrape_configs</code>, relabeling, service discovery: they paste straight in.</li>
+        <li>The pipeline wires it to <code>debug</code> and nothing else. No processors, on purpose.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>Migration cost of the pull side: copy-paste.</strong> Everything the Prometheus admins know still applies.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 01</span><span>zakaria.lu</span></div>

@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>THE DIFF</span></div>
+<h1>The whole migration, <em>in docker-compose</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left">
+    <pre class="tight"><span class="c-key">environment:</span>
+  <span class="c-key">JAVA_TOOL_OPTIONS:</span> <span class="c-str">"-javaagent:/otel/opentelemetry-javaagent.jar"</span>
+  <span class="c-key">OTEL_SERVICE_NAME:</span> <span class="c-str">otelshow-app</span>
+  <span class="c-key">OTEL_EXPORTER_OTLP_ENDPOINT:</span> <span class="c-str">http://otelcol:4317</span>
+  <span class="c-key">OTEL_EXPORTER_OTLP_PROTOCOL:</span> <span class="c-str">grpc</span>
+  <span class="c-key">OTEL_RESOURCE_ATTRIBUTES:</span> <span class="c-str">deployment.environment.name=demo,team=platform</span>
+  <span class="c-key">OTEL_METRIC_EXPORT_INTERVAL:</span> <span class="c-str">"10000"</span>
+<span class="mark">  <span class="c-key">OTEL_INSTRUMENTATION_MICROMETER_ENABLED:</span> <span class="c-str">"true"</span></span></pre>
+    <div style="display:flex;flex-direction:column;gap:18px;justify-content:center">
+      <div style="display:flex;gap:36px">
+        <div class="stat"><div class="n">7</div><div class="k">env vars</div></div>
+        <div class="stat"><div class="n">0</div><div class="k">java changes</div></div>
+      </div>
+      <div class="card">
+        <div class="label">gotcha</div>
+        <p>The Micrometer bridge is <strong>OFF by default</strong> in agent 2.x. Without the marked line, our custom <code>dice.rolls</code> counter never leaves the JVM.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>This is <code>git diff 02..03</code>, verbatim.</strong> The agent jar was already in the image — these lines are the entire shift.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 03 &middot; 03</span><span>zakaria.lu</span></div>

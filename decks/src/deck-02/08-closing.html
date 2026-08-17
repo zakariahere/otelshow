@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<body class="statement">
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>08</b><span>CLOSING</span></div>
+<h1>Same scrape semantics, <em>new spine</em></h1>
+<div class="sub">Nothing about the metrics changed &mdash; same names, same labels, same PromQL.
+We replaced the plumbing underneath them with a pipeline we can shape:
+limit &rarr; stamp &rarr; batch &rarr; fan&nbsp;out.</div>
+
+<div style="margin-top:30px" class="flow">
+  <div class="pill">lesson 03</div>
+  <div class="arrow">&rarr;</div>
+  <div style="font-family:var(--mono); font-size:16px; color:var(--ink-soft)">the app stops being scraped and starts pushing &mdash; traces, metrics <em>and</em> logs</div>
+</div>
+
+<div class="foot"><span>otel collector &middot; lesson 02 &middot; git switch 03-otlp-receiver</span><span>zakaria.lu</span></div>
+</body>

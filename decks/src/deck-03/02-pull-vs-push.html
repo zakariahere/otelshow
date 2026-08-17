@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>PULL VS PUSH</span></div>
+<h1>Pull asks around, <em>push fires and forgets</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <table>
+    <thead>
+      <tr><th style="width:22%">Concern</th><th>Pull (Prometheus scrape)</th><th>Push (OTLP)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>discovery</code></td><td>The backend must FIND every app — service discovery, scrape configs, relabeling.</td><td>The app fires at one preconfigured local address. Nobody hunts.</td></tr>
+      <tr><td><code>delivery</code></td><td>Backend's problem. App exposes an endpoint and hopes someone comes.</td><td>SDK/agent owns it: batching, gRPC streams, in-band acks.</td></tr>
+      <tr><td><code>retry</code></td><td>Missed scrape = hole in the data. Nobody retries.</td><td>Exporter retries with backoff; the collector buffers downstream.</td></tr>
+      <tr><td><code>app knows</code></td><td>Nothing — but also can't ship traces or logs this way at all.</td><td class="sig">ONE address: the collector. All three signals.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>Pull only ever solved metrics.</strong> Push over OTLP is the first model that carries traces, metrics and logs through the same front door.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 03 &middot; 02</span><span>zakaria.lu</span></div>

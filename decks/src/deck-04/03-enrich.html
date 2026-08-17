@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>02</b><span>enrich</span></div>
+<h1>Every record leaves <em>knowing where it came from</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols">
+    <div class="card">
+      <div class="label">resource_detection &mdash; environment self-awareness</div>
+<pre><span class="c-hit">resource_detection</span>:   <span class="c-com"># 'resourcedetection' is now a</span>
+  detectors: [<span class="c-str">env</span>, <span class="c-str">system</span>]  <span class="c-com"># deprecated alias (0.158)</span>
+  override: <span class="c-key">false</span></pre>
+      <p>Adds <code>os.type</code>, <code>host.name</code>, container id &mdash; the collector fills in what the app can't know it doesn't know.</p>
+    </div>
+    <div class="card">
+      <div class="label">attributes/team &mdash; key/value surgery</div>
+<pre><span class="c-key">attributes/team</span>:
+  actions:
+    - key: <span class="c-str">team</span>
+      value: <span class="c-str">platform-observability</span>
+      action: <span class="c-str">upsert</span></pre>
+      <p>Runs on every span, metric and log record that passes through &mdash; ownership tagging with zero app releases.</p>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">Watch component names: <strong>renames land as deprecation warnings today and errors later</strong> &mdash; write the 0.158 names.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 04 &middot; 02</span><span>zakaria.lu</span></div>

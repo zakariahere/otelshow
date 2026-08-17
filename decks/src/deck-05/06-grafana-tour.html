@@ -1,0 +1,25 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>lesson 05 &middot; grafana tour</span></div>
+<h1>The tour, <em>in four stops</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <ol class="steps">
+    <li><span><strong>Explore &rarr; Tempo</strong> &mdash; search <code>otelshow-app</code>, open a <code>GET /play</code> trace, spot the 1.2&thinsp;s outliers in the duration column.</span></li>
+    <li><span><strong>Explore &rarr; Loki</strong> &mdash; <code>{service_name="otelshow-app"}</code>; open a log line and jump <em>log &rarr; trace</em> through its <code>trace_id</code>.</span></li>
+    <li><span><strong>Explore &rarr; Prometheus</strong> &mdash; <code>http_server_request_duration_*</code>, <code>dice_rolls_total</code>: push-delivered, never scraped by this Prometheus.</span></li>
+    <li><span><strong>Dashboards</strong> &mdash; the LGTM image ships JVM and RED dashboards; they are already populated with our traffic.</span></li>
+  </ol>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">End every incident the same way: <strong>one trace_id stitches all three panes together</strong>.</div></div>
+
+<div class="foot"><span>otelshow &middot; 05 exporters</span><span>zakaria.lu</span></div>

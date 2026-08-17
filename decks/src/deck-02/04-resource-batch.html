@@ -1,0 +1,42 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>04</b><span>THE MIDDLE OF THE CHAIN</span></div>
+<h1>Stamp the origin, <em>ship in chunks</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols">
+    <div class="card">
+      <div class="label">RESOURCE/ENV &mdash; THE STAMP</div>
+      <p>Upserts <code>deployment.environment.name=demo</code> onto <strong>every
+      resource</strong> passing through &mdash; the app never has to know which
+      environment it runs in.</p>
+      <p>This is where platform metadata belongs: environment, region, cluster.
+      Configured once at the collector, not in every service.</p>
+    </div>
+    <div class="card">
+      <div class="label">BATCH &mdash; THE SHIPPING DEPARTMENT</div>
+      <p>Collects records for up to <code>timeout: 2s</code> (or a size cap) and
+      forwards them as <strong>one batch</strong> &mdash; fewer, fatter export calls.</p>
+      <p>Rule #2: <strong>always last</strong>. Everything after batch would re-split
+      the work; everything before it operates on single records.</p>
+    </div>
+  </div>
+  <div class="flow" style="justify-content:center">
+    <div class="node">memory_limiter</div><div class="arrow">&rarr;</div>
+    <div class="node">resource/env</div><div class="arrow">&rarr;</div>
+    <div class="node sig">batch</div><div class="arrow">&rarr;</div>
+    <div class="node">exporters</div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">We chose <strong>2 s on purpose</strong> &mdash; long enough to literally watch batches form in the debug log during the demo.</div></div>
+
+<div class="foot"><span>otel collector &middot; lesson 02</span><span>zakaria.lu</span></div>

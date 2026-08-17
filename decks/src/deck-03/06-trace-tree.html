@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+<body class="dark">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>DEBUG EXPORTER &middot; TRACES</span></div>
+<h1>One request, <em>read raw</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left" style="align-items:center">
+    <pre class="tight">Span #2
+    Trace ID  : <span class="c-hit">5a75a2661301591ce68825a525842376</span>
+    Name      : GET /play          Kind: Server
+Span #1
+    Trace ID  : <span class="c-hit">5a75a2661301591ce68825a525842376</span>
+    Name      : GET                Kind: Client
+    url.full  : http://localhost:8080/roll?player=alice
+Span #0
+    Trace ID  : <span class="c-hit">5a75a2661301591ce68825a525842376</span>
+    Name      : GET /roll          Kind: Server</pre>
+    <div style="display:flex;flex-direction:column;gap:12px;justify-content:center">
+      <div class="card">
+        <div class="label">measured this session</div>
+        <p style="font-family:var(--mono);font-size:15px;line-height:1.9">3&times; GET /play&nbsp;&nbsp;(server)<br>3&times; GET&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(client)<br>3&times; GET /roll&nbsp;&nbsp;(server)<br>1&times; GET /fail&nbsp;&nbsp;(error)</p>
+      </div>
+      <p style="margin:0;font-size:17px;color:var(--ink-soft)"><code>/play</code> calls <code>/roll</code> on itself &rarr; server &rarr; client &rarr; server, stitched by one trace_id.</p>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>Nobody wrote tracing code.</strong> The agent stitched the tree; the debug exporter is our microscope on it.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 03 &middot; 06</span><span>zakaria.lu</span></div>

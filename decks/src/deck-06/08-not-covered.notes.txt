@@ -1,0 +1,1 @@
+Honesty slide — the ladder taught the model, not the whole ecosystem. The Kafka bullet matters most for OUR migration: teams worried about abandoning topics should hear that the collector speaks Kafka natively, both directions. The scaling bullet foreshadows the one real operational trap: tail sampling requires all spans of a trace to hit the SAME collector instance.

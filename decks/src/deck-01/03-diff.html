@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>THE DIFF IS THE LESSON</span></div>
+<h1>One container, <em>twenty lines of YAML</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left">
+    <pre class="tight"><span class="c-com"># git diff main..01-prom-receiver &mdash; docker-compose.yml</span>
+<span class="c-hit">+ otelcol:</span>
++   image: <span class="c-str">otel/opentelemetry-collector-contrib:0.158.0</span>
++   volumes:
++     - <span class="c-str">./otel/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro</span>
++   ports:
++     - <span class="c-str">"4317:4317"</span>   <span class="c-com"># OTLP gRPC (lesson 03 will use it)</span>
++     - <span class="c-str">"4318:4318"</span>   <span class="c-com"># OTLP HTTP</span>
++   depends_on:
++     - app
++     - lgtm</pre>
+    <div style="display:flex; flex-direction:column; gap:14px; justify-content:center">
+      <ul class="list plain">
+        <li>Every lesson in this repo is a diff against the previous branch.</li>
+        <li>This one: a new service, a config bind-mount, and the OTLP ports &mdash; published now so the collector owns them from day one.</li>
+        <li>Plus one new file: <code>otel/otel-collector.yaml</code> &rarr; next slide.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">If a lesson's diff doesn't fit on a slide, it's two lessons. This one fits.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 01</span><span>zakaria.lu</span></div>

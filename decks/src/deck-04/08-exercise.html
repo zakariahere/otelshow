@@ -1,0 +1,26 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>07</b><span>live exercise</span></div>
+<h1>Break it on purpose: <em>swap drop and mutate</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <ol class="steps">
+    <li><span>In <code>otel/otel-collector.yaml</code>, move <code>filter/noise</code> <em>after</em> <code>transform/redact</code> in the traces pipeline.</span></li>
+    <li><span><code>docker compose restart otelcol</code> &mdash; bind-mount events don't propagate, restart is the only reload.</span></li>
+    <li><span>Send traffic. The output looks&hellip; identical. So what changed?</span></li>
+    <li><span>The transform now runs its regexes over <strong>every actuator span that was about to die</strong> &mdash; work you pay for, results nobody sees.</span></li>
+    <li><span>Put it back. Order is invisible in the output and very visible in the CPU bill.</span></li>
+  </ol>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">Correctness survives many orderings &mdash; <strong>cost doesn't</strong>. Drop first, then mutate what's left.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 04 &middot; 07</span><span>zakaria.lu</span></div>

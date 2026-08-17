@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>02</b><span>ANATOMY</span></div>
+<h1>A collector is three stages — <em>two of them optional-ish</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="flow" style="justify-content:center">
+    <div class="node sig">receiver</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node" style="border-style:dashed; color:var(--ink-mute)">processor&thinsp;*</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node">exporter</div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px">
+    <div class="card">
+      <div class="label">RECEIVERS PULL</div>
+      <p>The <code>prometheus</code> receiver goes and gets the data — a scrape loop
+      living inside the collector. The world it reads from doesn't change.</p>
+    </div>
+    <div class="card">
+      <div class="label">RECEIVERS LISTEN</div>
+      <p>The <code>otlp</code> receiver waits for apps to push (that's lesson 03).
+      Same stage, opposite direction of travel.</p>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>This branch has zero processors.</strong> Receiver &rarr; exporter is the smallest legal pipeline — everything between is opt-in.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 01</span><span>zakaria.lu</span></div>

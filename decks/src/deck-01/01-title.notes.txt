@@ -1,0 +1,1 @@
+Welcome to lesson one. Last session we looked at main: the app, the LGTM box, and a gap — Grafana knew nothing about us. Today one new container appears: the OpenTelemetry Collector. And to keep it comfortable, its first job is the job we already understand: scraping /actuator/prometheus. Same mechanics as the Prometheus we run today — just relocated.

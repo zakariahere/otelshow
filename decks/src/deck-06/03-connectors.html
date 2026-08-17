@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>connectors</span></div>
+<h1>Connectors: <em>pipelines feeding pipelines</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="flow" style="justify-content:center">
+    <div class="node">traces pipeline</div>
+    <span class="arrow">&#8594;</span>
+    <div class="node sig">connector = exporter&nbsp;+&nbsp;receiver</div>
+    <span class="arrow">&#8594;</span>
+    <div class="node">metrics pipeline</div>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <div class="label">span_metrics</div>
+      <p>Consumes every span, mints <strong>RED metrics</strong>: request rate, error rate, duration histograms — dimensioned by method and status code.</p>
+      <p>With <code>exemplars: enabled</code>, each datapoint remembers a real trace ID. (<code>spanmetrics</code> is the deprecated alias in 0.158.)</p>
+    </div>
+    <div class="card">
+      <div class="label">forward</div>
+      <p>The trivial connector: pass everything through, unchanged.</p>
+      <p>Sounds useless — it's the glue that lets you split one logical pipeline into two stages. We need exactly that on the next slide.</p>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>Traces became metrics — the app changed nothing.</strong> No Micrometer timer, no code review, no redeploy.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 06</span><span>03 / 09</span></div>

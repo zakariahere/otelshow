@@ -1,0 +1,1 @@
+Welcome. This is the first session of a short course on how we're changing the way our applications ship telemetry. Everything you'll see is a live demo from a repo called otelshow — every lesson is a git branch, and the diff between branches IS the lesson. Today: no new tech yet. Just a clear look at the world we're in, and the world we're moving to.

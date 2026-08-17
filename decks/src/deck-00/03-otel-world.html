@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+<style>
+  .big-flow { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+  .fan { display: flex; flex-direction: column; gap: 8px; }
+</style>
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>00</b><span>WHERE WE'RE GOING</span></div>
+<h1>One protocol, <em>one local destination</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="flow">
+    <span class="node">app</span>
+    <span class="arrow">&mdash;&mdash; OTLP push (gRPC :4317) &rarr;</span>
+    <span class="node sig">OTel Collector</span>
+    <span class="arrow">&rarr;</span>
+    <span class="fan">
+      <span class="node">Tempo &middot; traces</span>
+      <span class="node">Loki &middot; logs</span>
+      <span class="node">Prometheus &middot; metrics</span>
+    </span>
+  </div>
+  <ul class="list plain">
+    <li><strong>OTLP</strong> is one wire format that carries all three signals &mdash; traces, metrics, logs.</li>
+    <li>The app speaks to exactly one address: the collector. It never learns a backend name.</li>
+    <li>Swap a backend, add a destination, redact a field &mdash; all collector config, zero app deploys.</li>
+  </ul>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">The app's only job becomes <strong>emit once, locally</strong> &mdash; routing is somebody else's YAML.</div></div>
+
+<div class="foot"><span>otelshow &middot; two worlds</span><span>zakaria.lu</span></div>

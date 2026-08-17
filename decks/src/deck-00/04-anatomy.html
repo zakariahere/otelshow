@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>00</b><span>THE MACHINE</span></div>
+<h1>The collector is <em>three stages, full stop</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="flow" style="justify-content:center">
+    <span class="node">receivers</span><span class="arrow">&rarr;</span>
+    <span class="node">processors</span><span class="arrow">&rarr;</span>
+    <span class="node">exporters</span>
+  </div>
+  <div class="cols three">
+    <div class="card">
+      <div class="label">receivers</div>
+      <p>Get data <strong>in</strong> &mdash; by listening (OTLP on :4317) or by scraping (yes, it can scrape Prometheus endpoints).</p>
+    </div>
+    <div class="card">
+      <div class="label">processors</div>
+      <p>Mutate data <strong>in flight</strong> &mdash; batch, enrich, filter noise, redact secrets, sample.</p>
+    </div>
+    <div class="card">
+      <div class="label">exporters</div>
+      <p>Ship data <strong>out</strong> &mdash; to one backend or five, per signal, in whatever protocol each speaks.</p>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">That's the whole product. <strong>This course demonstrates each stage in isolation</strong>, one branch each.</div></div>
+
+<div class="foot"><span>otelshow &middot; two worlds</span><span>zakaria.lu</span></div>

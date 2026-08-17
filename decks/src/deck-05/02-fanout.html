@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>02</b><span>lesson 05 &middot; the fan-out</span></div>
+<h1>One pipeline per signal, <em>one exporter per backend</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <table>
+    <thead><tr><th>Pipeline</th><th>Exporter</th><th>Endpoint</th><th>Lands in</th></tr></thead>
+    <tbody>
+      <tr><td><code>traces</code></td><td><code>otlp_http/tempo</code></td><td><code>http://lgtm:4318</code></td><td>Tempo</td></tr>
+      <tr><td><code>logs</code></td><td><code>otlp_http/loki</code></td><td><code>http://lgtm:3100/otlp</code></td><td>Loki</td></tr>
+      <tr><td><code>metrics/otlp</code></td><td><code>otlp_http/prometheus</code></td><td><code>http://lgtm:9090/api/v1/otlp</code></td><td>Prometheus</td></tr>
+      <tr><td><code>metrics/scrape</code></td><td><code>prometheus_remote_write</code></td><td><code>http://lgtm:9090/api/v1/write</code></td><td>Prometheus</td></tr>
+    </tbody>
+  </table>
+  <ul class="list plain">
+    <li><span>Naming changed in 0.158: <code>otlphttp</code> is now a <strong>deprecated alias</strong> &mdash; the component is <code>otlp_http</code>.</span></li>
+    <li><span><code>debug</code> stays on every pipeline, demoted to <code>verbosity: normal</code> &mdash; Grafana is the star now.</span></li>
+  </ul>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">Same processed stream, <strong>fanned out per signal</strong> &mdash; each exporter is one YAML block, not one integration project.</div></div>
+
+<div class="foot"><span>otelshow &middot; 05 exporters</span><span>zakaria.lu</span></div>

@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>discussion &middot; find the leak</span></div>
+<h1>We redacted everything. <em>alice still leaked.</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left">
+    <div>
+      <ul class="list plain">
+        <li><span><strong>Metric exemplars.</strong> Histogram datapoints keep the <em>original</em> span attributes &mdash; and our transform runs on the <code>traces</code> pipeline, not <code>metrics</code>. We counted the survivors in the debug log:</span></li>
+      </ul>
+<pre class="tight" style="margin-top:10px">$ classify url.query leaks by surrounding context
+<span class="c-hit">4x EXEMPLAR leak (metrics pipeline)</span>
+0x SPAN leak</pre>
+      <ul class="list plain" style="margin-top:10px">
+        <li><span><strong>Phrasing drift.</strong> <code>"player \w+"</code> matches <code>player alice</code> &mdash; but the app also logs <code>game finished for alice</code>. The regex never sees it.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="label">the durable fix</div>
+      <p>Don't record sensitive values in the first place: semantic conventions, SDK-side views, code review on new attributes.</p>
+      <p><strong>The collector is your safety net &mdash; not your only defense.</strong></p>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">Regex redaction is whack-a-mole across three signals &mdash; <strong>every pipeline that touches the data needs its own audit</strong>.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 04 &middot; 06</span><span>zakaria.lu</span></div>

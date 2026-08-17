@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+<style>
+  .stage { display: flex; flex-direction: column; gap: 8px; }
+  .stage .tag { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute); }
+</style>
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>two-stage traces</span></div>
+<h1>Order <em>is architecture</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="stage">
+    <div class="tag">stage 1 &middot; traces/in — every span passes here</div>
+    <div class="flow">
+      <div class="node">otlp</div>
+      <span class="arrow">&#8594;</span>
+      <div class="node">enrich &middot; filter &middot; redact</div>
+      <span class="arrow">&#8594;</span>
+      <div class="node sig">span_metrics&nbsp;&nbsp;(sees 100&nbsp;%)</div>
+      <span class="arrow">+</span>
+      <div class="node">forward</div>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="tag">stage 2 &middot; traces/out — survivors only</div>
+    <div class="flow">
+      <div class="node">forward</div>
+      <span class="arrow">&#8594;</span>
+      <div class="node">tail_sampling&nbsp;&nbsp;(errors + slow + 25&nbsp;%)</div>
+      <span class="arrow">&#8594;</span>
+      <div class="node">batch</div>
+      <span class="arrow">&#8594;</span>
+      <div class="node">Tempo</div>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="tag">side branch &middot; metrics/spanmetrics</div>
+    <div class="flow">
+      <div class="node">span_metrics</div>
+      <span class="arrow">&#8594;</span>
+      <div class="node">batch</div>
+      <span class="arrow">&#8594;</span>
+      <div class="node">Prometheus</div>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">RED metrics are computed <strong>before</strong> sampling. Flip the two stages and your dashboards under-count by 4&times; — while looking perfectly healthy.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 06</span><span>04 / 09</span></div>

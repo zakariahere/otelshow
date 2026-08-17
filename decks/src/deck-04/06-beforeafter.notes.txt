@@ -1,0 +1,1 @@
+This is real output from docker compose logs otelcol, same request on branch 03 vs branch 04. Note what ALSO changed: team and os.type appeared - enrichment and redaction in one pass. The app code still logs the raw player name locally; what changed is what leaves the pod. One restart, no release, no code review queue.

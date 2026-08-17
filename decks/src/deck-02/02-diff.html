@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>02</b><span>THE DIFF IS THE LESSON</span></div>
+<h1>One <code style="font-size:0.85em">git diff</code>, <em>three processors + one exporter</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left">
+    <pre>
+<span class="c-key">processors:</span>
+  <span class="c-key">memory_limiter:</span>       <span class="c-com"># ALWAYS first: refuse data before OOM</span>
+    <span class="c-key">check_interval:</span> <span class="c-str">1s</span>
+    <span class="c-key">limit_mib:</span> <span class="c-str">400</span>
+    <span class="c-key">spike_limit_mib:</span> <span class="c-str">100</span>
+  <span class="c-key">resource/env:</span>         <span class="c-com"># stamp every batch with its origin</span>
+    <span class="c-key">attributes:</span>
+      - <span class="c-key">key:</span> <span class="c-str">deployment.environment.name</span>
+        <span class="c-key">value:</span> <span class="c-str">demo</span>
+        <span class="c-key">action:</span> <span class="c-str">upsert</span>
+  <span class="c-key">batch:</span>                <span class="c-com"># ALWAYS last: ship in efficient chunks</span>
+    <span class="c-key">timeout:</span> <span class="c-str">2s</span>   <span class="c-com"># long enough to SEE batching happen</span></pre>
+    <div>
+      <ul class="list">
+        <li><span><code>git diff 01..02 -- otel/</code> is the whole lesson &mdash; nothing else moved.</span></li>
+        <li><span>The receiver did not change. The app did not change. Only the middle of the pipe grew.</span></li>
+        <li><span>Processors are optional &mdash; lesson 01 proved it. Production says otherwise.</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>Read the comments in the YAML.</strong> The two ALWAYS rules are the whole slide &mdash; position in the chain is part of the contract.</div></div>
+
+<div class="foot"><span>otel collector &middot; lesson 02</span><span>zakaria.lu</span></div>

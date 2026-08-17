@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>drop</span></div>
+<h1>filter: <em>the cheapest span is a dead span</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left">
+    <div>
+<pre>filter/noise:
+  error_mode: <span class="c-str">ignore</span>
+  trace_conditions:
+    <span class="c-com"># our own scraper hits /actuator/prometheus</span>
+    <span class="c-com"># every 5s - each hit is a span. Kill them.</span>
+    - IsMatch(span.attributes[<span class="c-str">"url.path"</span>], <span class="c-str">"/actuator.*"</span>)</pre>
+      <ul class="list plain" style="margin-top:16px">
+        <li><span>OTTL conditions &mdash; a small expression language over spans, metrics and logs.</span></li>
+        <li><span><code>error_mode: ignore</code> &mdash; a broken condition skips the record, it doesn't crash the pipeline.</span></li>
+      </ul>
+    </div>
+    <div class="card" style="justify-content:center; align-items:center; text-align:center">
+      <div class="stat"><div class="n dim" style="font-size:34px">7&times; before</div></div>
+      <div class="stat"><div class="n sig">0</div><div class="k">actuator spans after restart</div></div>
+      <p style="margin-top:6px">measured in the debug log, this session</p>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">Self-inflicted noise is real: <strong>our monitoring was tracing itself</strong> &mdash; the filter ended it in one condition.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 04 &middot; 03</span><span>zakaria.lu</span></div>

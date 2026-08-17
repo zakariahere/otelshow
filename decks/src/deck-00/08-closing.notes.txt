@@ -1,0 +1,1 @@
+Open localhost:3000 right now — Grafana is running, no login, dashboards ready. Query it for our app: nothing. Empty. Every session from here closes part of that gap, and by session five all three signals land in it with one click from log to trace. Homework if you want it: clone otelshow, run docker compose up, and poke the dice game. Next time, the collector shows up.

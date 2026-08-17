@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>05</b><span>THE EXPORTER</span></div>
+<h1>Remote write &mdash; <em>an API your admins already know</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left">
+    <pre>
+<span class="c-key">exporters:</span>
+  <span class="c-key">debug:</span>
+    <span class="c-key">verbosity:</span> <span class="c-str">detailed</span>
+  <span class="c-key">prometheus_remote_write:</span>  <span class="c-com"># old name = deprecated alias</span>
+    <span class="c-key">endpoint:</span> <span class="c-str">http://lgtm:9090/api/v1/write</span>
+    <span class="c-key">tls:</span>
+      <span class="c-key">insecure:</span> <span class="c-str">true</span>
+
+<span class="c-key">service:</span>
+  <span class="c-key">pipelines:</span>
+    <span class="c-key">metrics:</span>
+      <span class="c-key">receivers:</span>  [prometheus]
+      <span class="c-key">processors:</span> [memory_limiter, resource/env, batch]
+      <span class="c-hit">exporters:  [debug, prometheus_remote_write]</span></pre>
+    <div>
+      <ul class="list">
+        <li><span>Speaks Prometheus's own remote-write protocol &mdash; zero new concepts for the Prometheus side.</span></li>
+        <li><span>The exporter list is a <strong>fan-out</strong>: every batch goes to <em>both</em> destinations, in full.</span></li>
+        <li><span>0.158 renamed it: <code>prometheus_remote_write</code>. The old one-word name still works &mdash; as a deprecation warning.</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">One line in a list is all fan-out costs. <strong>Same data, two destinations</strong> &mdash; the debug microscope stays on while real data ships.</div></div>
+
+<div class="foot"><span>otel collector &middot; lesson 02</span><span>zakaria.lu</span></div>

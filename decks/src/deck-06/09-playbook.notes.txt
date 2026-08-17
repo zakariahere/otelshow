@@ -1,0 +1,1 @@
+Close by mapping each step to the branch that demonstrated it: 1=01, 2=03, 3=03's coexisting scrape pipeline, 4=04, 5=05, 6=06. The whole course is the playbook, executed. Invite the team to clone the repo and walk the branches themselves — every lesson is a git switch away.

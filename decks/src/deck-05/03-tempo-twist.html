@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>lesson 05 &middot; the tempo twist</span></div>
+<h1>A collector <em>behind your collector</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="flow">
+    <div class="node">app</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node">otelcol (ours)</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node">lgtm:4318 &middot; embedded collector</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node">Tempo &middot; 127.0.0.1 only</div>
+  </div>
+  <div class="card signal">
+    <div class="label">why the detour</div>
+    <p>Tempo inside <code>grafana/otel-lgtm</code> binds its OTLP receivers to
+    <code>127.0.0.1</code> only &mdash; unreachable from any other container. So our traces
+    enter through the LGTM box's <em>own embedded collector</em> on <code>:4318</code>,
+    which forwards to Tempo locally.</p>
+  </div>
+  <ul class="list plain">
+    <li><span>Not a hack &mdash; this is the standard <strong>agent &rarr; gateway</strong> topology, in miniature.</span></li>
+    <li><span>In production: a collector per node/pod (agent) forwards to a central collector fleet (gateway) that owns backend credentials, sampling, and egress.</span></li>
+  </ul>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">Collectors <strong>compose</strong> &mdash; OTLP in, OTLP out means any collector can sit in front of any other.</div></div>
+
+<div class="foot"><span>otelshow &middot; 05 exporters</span><span>zakaria.lu</span></div>

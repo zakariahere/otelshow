@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>tail sampling</span></div>
+<h1>Sampling: <em>decide after the trace ends</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols">
+    <div class="card">
+      <div class="label">head sampling</div>
+      <p><strong>Decides at the first span.</strong> Cheap, stateless, done in the SDK.</p>
+      <p>But it's blind: it can't know the trace will error out or take 1.2&nbsp;s. The interesting traces get dropped with the boring ones.</p>
+    </div>
+    <div class="card signal">
+      <div class="label">tail sampling</div>
+      <p><strong>Waits for the whole trace, then judges it.</strong> Smart — and stateful: the collector buffers spans for <code>decision_wait</code> and holds up to <code>num_traces</code> in memory.</p>
+      <p>Intelligence has a RAM bill. That's the trade.</p>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>policy</th><th>type</th><th>keeps</th></tr></thead>
+    <tbody>
+      <tr><td><code>keep-errors</code></td><td>status_code</td><td>every trace with status ERROR</td></tr>
+      <tr><td><code>keep-slow</code></td><td>latency</td><td>everything over 1000&nbsp;ms</td></tr>
+      <tr><td><code>baseline</code></td><td>probabilistic</td><td>25&nbsp;% of the rest</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">Policies <strong>OR together</strong> — a trace survives if any one policy wants it.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 06</span><span>02 / 09</span></div>

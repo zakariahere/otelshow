@@ -1,0 +1,1 @@
+resource_detection asks the environment who we are - os.type, host.name, container id. resource/env and attributes/team stamp ownership. Big operational note: the component was called 'resourcedetection' for years; 0.158 renamed it resource_detection and the old name is a deprecated alias. Deprecation warnings in the collector log are your migration TODO list.

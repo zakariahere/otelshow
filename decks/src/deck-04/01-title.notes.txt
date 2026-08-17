@@ -1,0 +1,1 @@
+Session 4 of the otelshow ladder. Last time (branch 03) we watched all three signals arrive raw over OTLP. Today we put the processor chain between receiver and exporter. Everything in this deck ran live on the repo - the numbers are from our own debug log. Check out branch 04-otlp-processors to follow along.

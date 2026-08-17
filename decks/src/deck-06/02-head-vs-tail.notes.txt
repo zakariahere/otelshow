@@ -1,0 +1,1 @@
+Ask the room: if you can only keep 25% of traces, WHICH 25%? Head sampling picks randomly at the start. Tail sampling picks after seeing the outcome — so it can keep every error and every slow request, and thin only the boring traffic. The cost: the collector must buffer in-flight traces (decision_wait 5s in our demo, 30s is the prod default; num_traces 50000 bounds memory).

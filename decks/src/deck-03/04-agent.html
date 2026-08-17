@@ -1,0 +1,29 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+<body class="dark">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>THE JAVA AGENT</span></div>
+<h1>It was there all along — <em>env vars woke it</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <pre>Picked up JAVA_TOOL_OPTIONS: -javaagent:/otel/opentelemetry-javaagent.jar
+<span class="mark">[otel.javaagent 2026-08-17 18:59:27:606 +0000] [main] INFO
+    io.opentelemetry.javaagent.tooling.VersionLogger
+    - opentelemetry-javaagent - version: 2.30.0</span></pre>
+  <ul class="list">
+    <li><span>Rewrites bytecode at startup — Tomcat, JDK <code>HttpClient</code>, SLF4J/Logback, JDBC, and ~150 other libraries get instrumented in place.</span></li>
+    <li><span>Agent 2.x exports <strong>all three signals</strong> over OTLP by default. No per-signal wiring.</span></li>
+    <li><span>Baked into the image dormant since branch <code>main</code>: an agent jar with no <code>-javaagent</code> flag costs nothing.</span></li>
+  </ul>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>Instrumentation became a deploy-time decision,</strong> not a code review.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 03 &middot; 04</span><span>zakaria.lu</span></div>

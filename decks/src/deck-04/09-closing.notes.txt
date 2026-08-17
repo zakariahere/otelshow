@@ -1,0 +1,1 @@
+Land the migration pitch: each row on the left is a system someone in this room maintains today. The right column is one YAML file in one repo, changed by PR, deployed by restart. Next session: branch 05, where the debug exporter steps back and Tempo, Loki and Prometheus light up in Grafana.

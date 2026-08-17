@@ -1,0 +1,1 @@
+These are real numbers from building this repo, not marketing. One gotcha worth telling: the first measurement looked WRONG in both directions, because Tempo's search lags ingestion by 30-60s (ingester flush). Send traffic first, talk through the config, then search — or tail sampling will look broken when it isn't. That note is in the README.

@@ -1,0 +1,34 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+<body class="dark">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>05</b><span>DOCKER COMPOSE LOGS -F OTELCOL</span></div>
+<h1>Reading OTLP: <em>resource &rsaquo; scope &rsaquo; metric &rsaquo; datapoint</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <pre class="tight"><span class="dim">2026-08-17T18:58:48.619Z  info</span>  ResourceMetrics #0                     <span class="c-com">&#9668; WHO: one scraped target</span>
+Resource attributes:
+     -&gt; service.name: Str(otelshow-app)
+     -&gt; server.address: Str(app)
+InstrumentationScope <span class="c-str">.../receiver/prometheusreceiver</span> 0.158.0     <span class="c-com">&#9668; HOW it got in</span>
+Metric #4
+Descriptor:
+<span class="mark">     -&gt; Name: dice_rolls_total                                     <span class="c-com">&#9668; WHAT: our counter</span></span>
+     -&gt; Description: Number of dice rolls
+     -&gt; DataType: Sum
+NumberDataPoints #0
+StartTimestamp: 2026-08-17 18:58:43.619 +0000 UTC
+Timestamp:      2026-08-17 18:58:48.619 +0000 UTC
+Value: 1.000000                                                    <span class="c-com">&#9668; WHEN + the value</span></pre>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>Scraped text became structured data the moment it entered.</strong> Every metric now carries a resource, a scope, and typed datapoints.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 01</span><span>zakaria.lu</span></div>

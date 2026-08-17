@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+<style>
+  .flow-rows { display: flex; flex-direction: column; gap: 16px; }
+  .flow .who { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em;
+               text-transform: uppercase; color: var(--ink-mute); min-width: 74px; }
+</style>
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>00</b><span>TODAY</span></div>
+<h1>Three signals, <em>three different machines</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="flow-rows">
+    <div class="flow"><span class="who">traces</span>
+      <span class="node">app</span><span class="arrow">&rarr;</span>
+      <span class="node">Kafka topic</span><span class="arrow">&rarr;</span>
+      <span class="node">tracing backend</span>
+      <span class="pill">bespoke publisher code</span>
+    </div>
+    <div class="flow"><span class="who">logs</span>
+      <span class="node">app</span><span class="arrow">&rarr;</span>
+      <span class="node">Kafka topic</span><span class="arrow">&rarr;</span>
+      <span class="node">log backend</span>
+      <span class="pill">another format</span>
+    </div>
+    <div class="flow"><span class="who">metrics</span>
+      <span class="node">app :8080/metrics</span><span class="arrow">&larr;</span>
+      <span class="node">Prometheus</span>
+      <span class="pill">pull, not push</span>
+    </div>
+  </div>
+  <ul class="list">
+    <li>Three wire formats, three delivery models, three pipelines to operate.</li>
+    <li>Every app hardcodes the address of every backend it talks to.</li>
+    <li>Two signals push, one gets scraped &mdash; nothing correlates with anything.</li>
+  </ul>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>The app is doing the observability team's job</strong> &mdash; three times, three different ways.</div></div>
+
+<div class="foot"><span>otelshow &middot; two worlds</span><span>zakaria.lu</span></div>

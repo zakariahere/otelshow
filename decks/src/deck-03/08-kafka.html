@@ -1,0 +1,40 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>AND OUR TOPICS?</span></div>
+<h1>Kafka didn't die — <em>it moved behind the collector</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="flow">
+    <div class="node">app (OTLP)</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node sig">otel collector</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node">kafka exporter&nbsp;&middot;&nbsp;optional</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node">collector (gateway)</div>
+    <div class="arrow">&rarr;</div>
+    <div class="node">backends</div>
+  </div>
+  <div class="cols" style="align-items:center">
+    <div class="card">
+      <div class="label">what changes</div>
+      <p>Kafka becomes a <strong>transport concern</strong> inside the pipeline — the collector ships <code>kafka</code> exporter and receiver when you need buffering or fan-out between hops.</p>
+    </div>
+    <div class="card">
+      <div class="label">what stops</div>
+      <p>Apps hand-rolling producers, serializers and topic conventions per signal. The app's contract shrank to <strong>OTLP to one address</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>Keep the broker if the architecture needs it</strong> — but it's the platform team's plumbing now, invisible to every service.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 03 &middot; 08</span><span>zakaria.lu</span></div>

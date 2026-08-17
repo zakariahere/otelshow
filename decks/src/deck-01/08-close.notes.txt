@@ -1,0 +1,1 @@
+The closing thought: nothing about our metrics changed except their container — and that container, OTLP, is the same one that holds traces and logs. That's why this lesson matters beyond scraping: we just learned to read the format the entire rest of the course is written in. Next session, same scrape, but we add processors and ship the result into the LGTM box for real.

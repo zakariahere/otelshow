@@ -1,0 +1,51 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>otel/otel-collector.yaml</span></div>
+<h1>Two blocks, <em>one platform</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols">
+    <pre class="tight"><span class="c-key">connectors:</span>
+  <span class="c-key">span_metrics:</span>          <span class="c-com"># 'spanmetrics' = deprecated</span>
+    <span class="c-key">histogram:</span>
+      <span class="c-key">explicit:</span>
+        <span class="c-key">buckets:</span> [<span class="c-str">5ms</span>, &hellip;, <span class="c-str">1s</span>, <span class="c-str">2s</span>, <span class="c-str">5s</span>]
+    <span class="c-key">dimensions:</span>
+      - <span class="c-key">name:</span> <span class="c-str">http.request.method</span>
+      - <span class="c-key">name:</span> <span class="c-str">http.response.status_code</span>
+    <span class="c-key">exemplars:</span>
+      <span class="c-key">enabled:</span> true
+    <span class="c-key">metrics_flush_interval:</span> <span class="c-str">15s</span>
+  <span class="c-key">forward:</span> {}</pre>
+    <pre class="tight"><span class="c-key">tail_sampling:</span>
+  <span class="c-key">decision_wait:</span> <span class="c-str">5s</span>    <span class="c-com"># prod: 30s</span>
+  <span class="c-key">num_traces:</span> 50000
+  <span class="c-key">policies:</span>
+    - <span class="c-key">name:</span> <span class="c-str">keep-errors</span>
+      <span class="c-key">type:</span> <span class="c-str">status_code</span>
+      <span class="c-key">status_code:</span> {<span class="c-key">status_codes:</span> [<span class="c-str">ERROR</span>]}
+    - <span class="c-key">name:</span> <span class="c-str">keep-slow</span>
+      <span class="c-key">type:</span> <span class="c-str">latency</span>
+      <span class="c-key">latency:</span> {<span class="c-key">threshold_ms:</span> 1000}
+    - <span class="c-key">name:</span> <span class="c-str">baseline</span>
+      <span class="c-key">type:</span> <span class="c-str">probabilistic</span>
+      <span class="c-key">probabilistic:</span> {<span class="c-key">sampling_percentage:</span> 25}</pre>
+  </div>
+  <div class="flow" style="justify-content:center">
+    <div class="node">exporters: [<span class="c-hit">span_metrics</span>, forward]</div>
+    <span class="arrow">&#8592;</span>
+    <div class="node">the connector sits in the exporters list of one pipeline, the receivers list of another</div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">Validated offline with <strong>otelcol validate</strong> before it ever ran — schema errors cost seconds, not demo time.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 06</span><span>05 / 09</span></div>

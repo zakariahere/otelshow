@@ -1,0 +1,28 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>07</b><span>lesson 05 &middot; demo pacing</span></div>
+<h1>Gotcha: Tempo search <em>lags ingestion</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols wide-left">
+    <ul class="list plain">
+      <li><span>The ingester flushes to searchable blocks on a timer &mdash; freshly shipped traces are stored but <strong>not yet findable</strong>.</span></li>
+      <li><span>We hit it live while verifying: 20 plays looked like <em>1 kept</em>; the same window re-queried a minute later showed <em>7</em>.</span></li>
+      <li><span>Demo routine: send traffic <strong>first</strong>, talk through the YAML while it flushes, search <strong>last</strong>.</span></li>
+      <li><span>Matters double next lesson &mdash; lag makes tail sampling look broken when it isn't.</span></li>
+    </ul>
+    <div class="stat"><span class="n sig">30&ndash;60&thinsp;s</span><span class="k">ingestion &rarr; searchable</span></div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">If the trace count looks wrong, <strong>check the clock before the config</strong>.</div></div>
+
+<div class="foot"><span>otelshow &middot; 05 exporters</span><span>zakaria.lu</span></div>

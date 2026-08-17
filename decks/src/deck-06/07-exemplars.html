@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>exemplars</span></div>
+<h1>Metric to trace, <em>one click</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="label">grafana &middot; explore &middot; prometheus</div>
+    <p><code>rate(traces_span_metrics_calls_total[1m])</code></p>
+    <p>The chart shows little dots riding the line — <strong>exemplars</strong>. Each one is a real trace ID that the span_metrics connector attached to the datapoint. Click a dot, land in Tempo on the exact request that made the histogram twitch.</p>
+  </div>
+  <div class="flow" style="justify-content:center">
+    <div class="node">spike on the dashboard</div>
+    <span class="arrow">&#8594;</span>
+    <div class="node sig">exemplar dot</div>
+    <span class="arrow">&#8594;</span>
+    <div class="node">the exact trace in Tempo</div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">The debugging loop we used to do by hand — spot a spike, grep timestamps, hunt the trace — is now <strong>one click</strong>, minted by the collector.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 06</span><span>07 / 09</span></div>

@@ -1,0 +1,36 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<body class="dark">
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>06</b><span>PROOF &middot; LIVE FROM THIS SESSION</span></div>
+<h1>The metric landed &mdash; <em>nobody scraped it</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <pre>
+<span class="dim">PS&gt;</span> curl.exe -s "http://localhost:9090/api/v1/query?query=dice_rolls_total"
+
+{
+<span class="mark">  "__name__": "dice_rolls_total",</span>
+  "instance": "app:8080",
+  "job": "otelshow-app",
+  "otel_scope_name": "github.com/open-telemetry/...-contrib/receiver/prometheusreceiver",
+  "otel_scope_version": "0.158.0"
+}</pre>
+  <ul class="list">
+    <li><span>Straight from LGTM's Prometheus query API &mdash; the metric exists server-side.</span></li>
+    <li><span><code>otel_scope_*</code> labels betray the courier: this arrived <em>through the collector</em>, not via scrape.</span></li>
+    <li><span>Grafana &rarr; Explore &rarr; Prometheus &rarr; <code>rate(dice_rolls_total[1m])</code> draws it live.</span></li>
+  </ul>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">The scope labels are the receipt &mdash; <strong>the collector delivered this metric</strong>, end to end.</div></div>
+
+<div class="foot"><span>otel collector &middot; lesson 02</span><span>zakaria.lu</span></div>
+</body>

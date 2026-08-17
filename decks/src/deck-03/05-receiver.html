@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>03</b><span>RECEIVER SIDE</span></div>
+<h1>One receiver, <em>three signals in</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+  <div class="cols" style="align-items:center">
+    <pre><span class="c-key">receivers:</span>
+  <span class="c-key">otlp:</span>
+    <span class="c-key">protocols:</span>
+      <span class="c-key">grpc:</span>
+        <span class="c-key">endpoint:</span> <span class="c-hit">0.0.0.0:4317</span>
+      <span class="c-key">http:</span>
+        <span class="c-key">endpoint:</span> <span class="c-hit">0.0.0.0:4318</span></pre>
+    <div style="display:flex;flex-direction:column;gap:14px;justify-content:center">
+      <div class="card">
+        <div class="label">pipelines on this branch</div>
+        <p style="font-family:var(--mono);font-size:15px;line-height:1.9">traces&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: otlp &rarr; debug<br>metrics/otlp: otlp &rarr; debug<br>logs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: otlp &rarr; debug<br><span class="dim">metrics/scrape: prometheus &rarr; remote_write</span></p>
+      </div>
+      <div class="card">
+        <div class="label">gotcha</div>
+        <p>The in-container default endpoint is <code>localhost</code>-only. Forget <code>0.0.0.0</code> and nothing connects — no error on the collector, just silence.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt"><strong>The old scrape pipeline still runs, muted.</strong> Migration is coexistence, not a cliff edge.</div></div>
+
+<div class="foot"><span>otelshow &middot; lesson 03 &middot; 05</span><span>zakaria.lu</span></div>

@@ -1,0 +1,34 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="slide-base.css">
+
+<body class="dark">
+<div class="tick h t1h"></div><div class="tick v t1v"></div>
+<div class="tick h t2h"></div><div class="tick v t2v"></div>
+<div class="tick h t3h"></div><div class="tick v t3v"></div>
+<div class="tick h t4h"></div><div class="tick v t4v"></div>
+
+<div class="kicker"><b>05</b><span>lesson 05 &middot; proof, from this stack</span></div>
+<h1>Same traffic, <em>three backends lit up</em></h1>
+<div class="hr"></div>
+
+<div class="wrap">
+<pre class="tight"><span class="c-com"># Tempo &mdash; search API, service.name=otelshow-app</span>
+{"traces":[
+  {"traceID":"57eefd257b8d4f392d4fa2eed95ca2a4","rootServiceName":"otelshow-app",
+   "rootTraceName":"GET /play","durationMs":8},
+  {"traceID":"1bbd1ff5df852b297868dc90ffe8684","rootTraceName":"GET /play","durationMs":7},
+<span class="mark">  {"traceID":"&hellip;","rootTraceName":"GET /play","durationMs":1207},   <span class="c-com">&larr; the slow roll</span></span>
+ ]}
+
+<span class="c-com"># Loki &mdash; query_range {service_name="otelshow-app"}</span>
+3 streams
+
+<span class="c-com"># Prometheus &mdash; native OTLP ingest</span>
+http_server_request_duration_seconds_count  &rarr; series present</pre>
+</div>
+
+<div class="verdict"><div class="bar"></div><div class="txt">The 1.2&thinsp;s sleep we planted in <code>/roll</code> is already visible from the search API &mdash; <strong>durationMs 1207</strong>.</div></div>
+
+<div class="foot"><span>otelshow &middot; 05 exporters</span><span>zakaria.lu</span></div>
+</body>
